@@ -98,7 +98,7 @@ do
 		else
 			useCol="${greenCol}"
 		fi
-		if [[ $(( batteryCapacity/20 )) -ge $((i-1)) ]] || [[ batteryCapacity -lt 20 ]];then
+		if [[ $(( batteryCapacity/20 )) -ge $(( i-1 )) ]] || [[ batteryCapacity -lt 20 ]];then
 			if [[ ! i -eq 1 ]];then
 				fillStr=" "
 			else
