@@ -61,13 +61,19 @@ greenCol=$(getCol 0 32)
 redCol=$(getCol 0 31)
 yellowCol=$(getCol 1 33)
 
+# Battery constants
+batteryCharging='Charging'
+
 # Battery vars
 batteryCapacity=$(cat /sys/class/power_supply/BAT0/capacity)
 batteryStatus=$(cat /sys/class/power_supply/BAT0/status)
 
-batteryCapacity="21"
+batteryCapacity="80"
 
 # Ascii art specifika
+artFillShell='#'
+artFillPower='X'
+artFillEmptyPower='O'
 artEmptySpace="5"
 artBatShellWidth="2"
 artBatOutShellHeight=$(( $artBatShellWidth * 2 ))
@@ -78,7 +84,7 @@ do
 	artRow="$(getEmptyString $artEmptySpace)$(getEmptyString $artBatShellWidth)"
 	for i in $(seq 1 5);
 	do
-		artRow="${artRow}$(fillStringWith '#' ${artBatProgressPartWidth})"
+		artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatProgressPartWidth})"
 	done
 	echo -e "${artRow}"
 done
@@ -86,30 +92,30 @@ done
 for i in $(seq 1 ${artBatOutShellHeight});
 do
 	artRow="$(getEmptyString $artEmptySpace)"
-	artRow="${artRow}$(fillStringWith '#' ${artBatShellWidth})"
+	artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatShellWidth})"
 	for i in $(seq 1 5);
 	do
 		useCol=""
 		fillStr=""
 		if [[ batteryCapacity -lt 20 ]];then
 			useCol="${redCol}"
-		elif [[ $batteryStatus == "Charging" ]];then
+		elif [[ $batteryStatus == $batteryCharging ]];then
 			useCol="${yellowCol}"
 		else
 			useCol="${greenCol}"
 		fi
 		if [[ $(( batteryCapacity/20 )) -ge $(( i-1 )) ]] || [[ batteryCapacity -lt 20 ]];then
 			if [[ ! i -eq 1 ]];then
-				fillStr=" "
+				fillStr="${artFillEmptyPower}"
 			else
-				fillStr="$(echoCol ${useCol} '#')"
+				fillStr="$(echoCol ${useCol} "${artFillPower}")"
 			fi
 		else
-			fillStr=" "
+			fillStr="${artFillEmptyPower}"
 		fi
 		artRow="${artRow}$(fillStringWith ${fillStr} ${artBatProgressPartWidth})"
 	done
-	artRow="${artRow}$(fillStringWith '#' ${artBatShellWidth})"
+	artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatShellWidth})"
 	echo -e "${artRow}"
 done
 
@@ -118,7 +124,7 @@ do
 	artRow="$(getEmptyString $artEmptySpace)$(getEmptyString $artBatShellWidth)"
 	for i in $(seq 1 5);
 	do
-		artRow="${artRow}$(fillStringWith '#' ${artBatProgressPartWidth})"
+		artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatProgressPartWidth})"
 	done
 	echo -e "${artRow}"
 done
