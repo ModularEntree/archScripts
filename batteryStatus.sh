@@ -35,7 +35,7 @@ function echoCol () {
 	local newColor=$1
 	local message=$2
 	local resetColor='\033[0m'
-	echo -e "${newColor} ${message} ${resetColor}"
+	echo -e "${newColor}${message}${resetColor}"
 }
 
 function getEmptyString () {
@@ -63,6 +63,9 @@ yellowCol=$(getCol 1 33)
 
 # Battery vars
 batteryCapacity=$(cat /sys/class/power_supply/BAT0/capacity)
+batteryStatus=$(cat /sys/class/power_supply/BAT0/status)
+
+batteryCapacity="21"
 
 # Ascii art specifika
 artEmptySpace="5"
@@ -77,16 +80,45 @@ do
 	do
 		artRow="${artRow}$(fillStringWith '#' ${artBatProgressPartWidth})"
 	done
-	echo "${artRow}"
+	echo -e "${artRow}"
 done
 
 for i in $(seq 1 ${artBatOutShellHeight});
 do
 	artRow="$(getEmptyString $artEmptySpace)"
-	for i in $(seq 1 ${artBatShellWidth});
+	artRow="${artRow}$(fillStringWith '#' ${artBatShellWidth})"
+	for i in $(seq 1 5);
 	do
-		artRow="${$artRow}#"
+		useCol=""
+		fillStr=""
+		if [[ batteryCapacity -lt 20 ]];then
+			useCol="${redCol}"
+		elif [[ $batteryStatus == "Charging" ]];then
+			useCol="${yellowCol}"
+		else
+			useCol="${greenCol}"
+		fi
+		if [[ $(( batteryCapacity/20 )) -ge $((i-1)) ]] || [[ batteryCapacity -lt 20 ]];then
+			if [[ ! i -eq 1 ]];then
+				fillStr=" "
+			else
+				fillStr="$(echoCol ${useCol} '#')"
+			fi
+		else
+			fillStr=" "
+		fi
+		artRow="${artRow}$(fillStringWith ${fillStr} ${artBatProgressPartWidth})"
 	done
-	for i in $(seq 1 ${art})
-	echo "${artRow}"
+	artRow="${artRow}$(fillStringWith '#' ${artBatShellWidth})"
+	echo -e "${artRow}"
+done
+
+for i in $(seq 1 ${artBatShellWidth});
+do
+	artRow="$(getEmptyString $artEmptySpace)$(getEmptyString $artBatShellWidth)"
+	for i in $(seq 1 5);
+	do
+		artRow="${artRow}$(fillStringWith '#' ${artBatProgressPartWidth})"
+	done
+	echo -e "${artRow}"
 done
