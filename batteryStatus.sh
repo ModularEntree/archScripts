@@ -72,9 +72,10 @@ batteryStatus=$(cat /sys/class/power_supply/BAT0/status)
 artFillShell='#'
 artFillPower='X'
 artFillEmptyPower='O'
-artEmptySpace="5"
-artBatShellWidth="3"
+artEmptySpace='5'
+artBatShellWidth='3'
 artBatOutShellHeight=$(( $artBatShellWidth * 2 ))
+artBatProgressParts='7'
 artBatProgressPartWidth=$(( $artBatShellWidth * 2 ))
 
 echo -e "\n"
@@ -82,7 +83,7 @@ echo -e "\n"
 for i in $(seq 1 ${artBatShellWidth});
 do
 	artRow="$(getEmptyString $artEmptySpace)$(getEmptyString $artBatShellWidth)"
-	for i in $(seq 1 5);
+	for i in $(seq 1 ${artBatProgressParts});
 	do
 		artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatProgressPartWidth})"
 	done
@@ -93,18 +94,18 @@ for i in $(seq 1 ${artBatOutShellHeight});
 do
 	artRow="$(getEmptyString $artEmptySpace)"
 	artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatShellWidth})"
-	for i in $(seq 1 5);
+	for i in $(seq 1 ${artBatProgressParts});
 	do
 		useCol=""
 		fillStr=""
-		if [[ batteryCapacity -lt 20 ]];then
+		batCap=$(( batteryCapacity/ $(( 100 / artBatProgressParts )) ))
+		if [[ batCap -lt 1 ]];then
 			useCol="${redCol}"
 		elif [[ $batteryStatus == $batteryCharging ]];then
 			useCol="${yellowCol}"
 		else
 			useCol="${greenCol}"
 		fi
-		batCap=$(( batteryCapacity/20 ))
 		if [[ batCap  -ge $(( i-1 )) ]];then
 			fillStr="$(echoCol ${useCol} "${artFillPower}")"
 		elif [[ batCap -lt 1 ]] && [[ i -eq 1 ]];then
@@ -121,7 +122,7 @@ done
 for i in $(seq 1 ${artBatShellWidth});
 do
 	artRow="$(getEmptyString $artEmptySpace)$(getEmptyString $artBatShellWidth)"
-	for i in $(seq 1 5);
+	for i in $(seq 1 ${artBatProgressParts});
 	do
 		artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatProgressPartWidth})"
 	done
