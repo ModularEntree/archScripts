@@ -91,8 +91,8 @@ artFillEmptyPower='O'
 artFillDelim='X'
 
 # Upravitelné rozměry
-artEmptySpace='5'
-artBatShellWidth='3'
+artEmptySpace='6'
+artBatShellWidth='4'
 artBatProgressParts='7'
 artBatProgressPartDelimWidth='1'
 
