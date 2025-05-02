@@ -68,16 +68,16 @@ batteryCharging='Charging'
 batteryCapacity=$(cat /sys/class/power_supply/BAT0/capacity)
 batteryStatus=$(cat /sys/class/power_supply/BAT0/status)
 
-batteryCapacity="80"
-
 # Ascii art specifika
 artFillShell='#'
 artFillPower='X'
 artFillEmptyPower='O'
 artEmptySpace="5"
-artBatShellWidth="2"
+artBatShellWidth="3"
 artBatOutShellHeight=$(( $artBatShellWidth * 2 ))
 artBatProgressPartWidth=$(( $artBatShellWidth * 2 ))
+
+echo -e "\n"
 
 for i in $(seq 1 ${artBatShellWidth});
 do
@@ -104,12 +104,11 @@ do
 		else
 			useCol="${greenCol}"
 		fi
-		if [[ $(( batteryCapacity/20 )) -ge $(( i-1 )) ]] || [[ batteryCapacity -lt 20 ]];then
-			if [[ ! i -eq 1 ]];then
-				fillStr="${artFillEmptyPower}"
-			else
-				fillStr="$(echoCol ${useCol} "${artFillPower}")"
-			fi
+		batCap=$(( batteryCapacity/20 ))
+		if [[ batCap  -ge $(( i-1 )) ]];then
+			fillStr="$(echoCol ${useCol} "${artFillPower}")"
+		elif [[ batCap -lt 1 ]] && [[ i -eq 1 ]];then
+			fillStr="$(echoCol ${useCol} "${artFillPower}")"
 		else
 			fillStr="${artFillEmptyPower}"
 		fi
@@ -128,3 +127,5 @@ do
 	done
 	echo -e "${artRow}"
 done
+
+echo -e "\n"
