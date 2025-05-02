@@ -56,10 +56,15 @@ function fillStringWith () {
 
 # MAIN
 
+# NEZNÁMÉ
+
 # Colors
 greenCol=$(getCol 0 32)
 redCol=$(getCol 0 31)
 yellowCol=$(getCol 1 33)
+darkGrayCol=$(getCol 1 30)
+lightGrayCol=$(getCol 0 37)
+whiteCol=$(getCol 1 37)
 
 # Battery constants
 batteryCharging='Charging'
@@ -69,14 +74,38 @@ batteryCapacity=$(cat /sys/class/power_supply/BAT0/capacity)
 batteryStatus=$(cat /sys/class/power_supply/BAT0/status)
 
 # Ascii art specifika
+
+# ASCII barvy
+
+artColCriticalPower=$redCol
+artColNormalPower=$greenCol
+artColChargingPower=$yellowCol
+artColEmptyPower=$whiteCol
+artColShell=$lightGrayCol
+artColDelim=$darkGrayCol
+
+# ASCII Fill
 artFillShell='#'
 artFillPower='X'
 artFillEmptyPower='O'
+artFillDelim='X'
+
+# Upravitelné rozměry
 artEmptySpace='5'
 artBatShellWidth='3'
-artBatOutShellHeight=$(( $artBatShellWidth * 2 ))
 artBatProgressParts='7'
+artBatProgressPartDelimWidth='1'
+
+# Automaticky počítané rozměry
+artBatOutShellHeight=$(( $artBatShellWidth * 2 ))
 artBatProgressPartWidth=$(( $artBatShellWidth * 2 ))
+
+# Barvy zástupců
+artFillColShell="$(echoCol ${artColShell} "${artFillShell}")"
+artFillColEmptyPower="$(echoCol ${artColEmptyPower} "${artFillEmptyPower}")"
+artFillColDelim="$(echoCol ${artColDelim} "${artFillDelim}")"
+
+# VYKRESLOVÁNÍ
 
 echo -e "\n"
 
@@ -85,7 +114,12 @@ do
 	artRow="$(getEmptyString $artEmptySpace)$(getEmptyString $artBatShellWidth)"
 	for i in $(seq 1 ${artBatProgressParts});
 	do
-		artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatProgressPartWidth})"
+		if [[ ! i -eq artBatProgressParts ]];then
+			widthOfPart=$(( artBatProgressPartWidth + artBatProgressPartDelimWidth ))
+		else
+			widthOfPart=${artBatProgressPartWidth}
+		fi
+		artRow="${artRow}$(fillStringWith "${artFillColShell}" ${widthOfPart})"
 	done
 	echo -e "${artRow}"
 done
@@ -93,7 +127,7 @@ done
 for i in $(seq 1 ${artBatOutShellHeight});
 do
 	artRow="$(getEmptyString $artEmptySpace)"
-	artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatShellWidth})"
+	artRow="${artRow}$(fillStringWith "${artFillColShell}" ${artBatShellWidth})"
 	for i in $(seq 1 ${artBatProgressParts});
 	do
 		useCol=""
@@ -111,11 +145,14 @@ do
 		elif [[ batCap -lt 1 ]] && [[ i -eq 1 ]];then
 			fillStr="$(echoCol ${useCol} "${artFillPower}")"
 		else
-			fillStr="${artFillEmptyPower}"
+			fillStr="${artFillColEmptyPower}"
 		fi
 		artRow="${artRow}$(fillStringWith ${fillStr} ${artBatProgressPartWidth})"
+		if [[ ! i -eq artBatProgressParts ]];then
+			artRow="${artRow}$(fillStringWith "${artFillColDelim}" $artBatProgressPartDelimWidth)"
+		fi
 	done
-	artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatShellWidth})"
+	artRow="${artRow}$(fillStringWith "${artFillColShell}" ${artBatShellWidth})"
 	echo -e "${artRow}"
 done
 
@@ -124,7 +161,12 @@ do
 	artRow="$(getEmptyString $artEmptySpace)$(getEmptyString $artBatShellWidth)"
 	for i in $(seq 1 ${artBatProgressParts});
 	do
-		artRow="${artRow}$(fillStringWith "${artFillShell}" ${artBatProgressPartWidth})"
+		if [[ ! i -eq artBatProgressParts ]];then
+			widthOfPart=$(( artBatProgressPartWidth + artBatProgressPartDelimWidth ))
+		else
+			widthOfPart=${artBatProgressPartWidth}
+		fi
+		artRow="${artRow}$(fillStringWith "${artFillColShell}" ${widthOfPart})"
 	done
 	echo -e "${artRow}"
 done
