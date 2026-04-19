@@ -1,0 +1,13 @@
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias batcap='cat /sys/class/power_supply/BAT0/capacity'
+#alias startDocker='sudo systemctl start docker'
+alias nmConnect='nmcli device wifi connect'
+alias nmList='nmcli device wifi list'
+PS1='[\u@\h \W]\$ '
+
+# Just because it's fancy
+fastfetch
+
+export PATH=$PATH:${HOME}/.config/composer/vendor/bin/:${HOME}/scripts/
+export EDITOR=/bin/nvim
