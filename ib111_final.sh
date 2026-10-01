@@ -2,10 +2,16 @@
 
 failed=0
 
+if [[ $1 == "--sady" ]]; then
+	sady=1
+else
+	sady=0
+fi
+
 echo "Spouštím test SANITY na přípravách ve složce $(pwd)"
 echo "----------"
 for FILE in *; do
-	if [[ $(basename $FILE) == p* ]]; then
+	if [[ $sady -eq 0 && $(basename $FILE) == p* ]] || [[ $sady -eq 1 && $(basename $FILE) == [a-e]* ]]; then
 		echo "Spouštím $FILE"
 		SECONDS=0
 		if ! /home/modular/projects/archScripts/ib111_run.sh $FILE; then
