@@ -10,7 +10,7 @@ else
 	sady=0
 fi
 
-echo "Spouštím test SANITY na přípravách ve složce $(pwd)"
+echo "Spouštím test SANITY na úlohách ve složce $(pwd)"
 echo "----------"
 for FILE in *; do
 	if [[ $sady -eq 0 && $(basename $FILE) == p* ]] || [[ $sady -eq 1 && $(basename $FILE) == [a-e]* ]]; then
@@ -32,8 +32,8 @@ done
 
 if [[ $failed -eq 1 ]]; then
 	echo -e "\e[31m$pocet_succ/$pocet_skriptu\e[0m"
-	echo -e "\e[31mNěkteré přípravy selhaly.\e[0m"
+	echo -e "\e[31mNěkteré úlohy selhaly.\e[0m"
 else
 	echo -e "\e[92m$pocet_succ/$pocet_skriptu\e[0m"
-	echo -e "\e[92mVšechny přípravy uspěly.\e[0m"
+	echo -e "\e[92mVšechny úlohy uspěly.\e[0m"
 fi
